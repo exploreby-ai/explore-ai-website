@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ExploreAI — World's Most Powerful AIs. One Subscription.</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #050508;
+    --bg2: #080810;
+    --surface: rgba(255,255,255,0.035);
+    --surface2: rgba(255,255,255,0.06);
+    --border: rgba(255,255,255,0.08);
+    --border-glow: rgba(0,230,160,0.35);
+    --green: #00e6a0;
+    --teal: #00c8d4;
+    --green2: #00ff99;
+    --text: #f0f4f8;
+    --muted: #6b7a8d;
+    --accent-glow: 0 0 30px rgba(0,230,160,0.25), 0 0 60px rgba(0,230,160,0.1);
+    --card-shadow: 0 12px 50px rgba(0,0,0,0.6);
+    --smooth: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    overflow-x: hidden;
+    cursor: default;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ─── GRID BACKGROUND ─── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(0,230,160,0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,230,160,0.035) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+    animation: gridMove 20s linear infinite;
+  }
+
+  @keyframes gridMove {
+    0%   { background-position: 0 0; }
+    100% { background-position: 60px 60px; }
+  }
+
+  /* ─── RADIAL GLOW BLOBS ─── */
+  .blob {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(120px);
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.18;
+    animation: blobFloat 12s ease-in-out infinite;
+  }
+  .blob-1 { width: 50vw; height: 50vw; max-width: 500px; max-height: 500px; background: var(--green); top: -10%; right: 10%; animation-delay: 0s; }
+  .blob-2 { width: 40vw; height: 40vw; max-width: 400px; max-height: 400px; background: var(--teal); bottom: 20%; left: -5%; animation-delay: 4s; }
+  .blob-3 { width: 35vw; height: 35vw; max-width: 350px; max-height: 350px; background: var(--green); bottom: -5%; right: 30%; animation-delay: 8s; }
+
+  @keyframes blobFloat {
+    0%,100% { transform: translateY(0) scale(1); }
+    50%      { transform: translateY(-40px) scale(1.05); }
+  }
+
+  /* ─── UTILS ─── */
+  .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+  .section { padding: 100px 0; }
+  .section-label {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 12px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--green); background: rgba(0,230,160,0.08); border: 1px solid rgba(0,230,160,0.2);
+    border-radius: 100px; padding: 6px 16px; margin-bottom: 20px;
+  }
+  .section-label::before { content:''; width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green); }
+  .section-title { font-family: 'Syne', sans-serif; font-size: clamp(32px,5vw,52px); font-weight: 800; line-height: 1.1; margin-bottom: 16px; letter-spacing: -0.02em; }
+  .section-sub { font-size: 17px; color: var(--muted); line-height: 1.65; max-width: 520px; }
+  
+  .gradient-text { 
+    background: linear-gradient(135deg, var(--green), var(--teal), var(--green)); 
+    background-size: 200% auto;
+    -webkit-background-clip: text; 
+    -webkit-text-fill-color: transparent; 
+    background-clip: text; 
+  }
+  .shine-effect {
+    animation: shine 4s linear infinite;
+  }
+  @keyframes shine {
+    to { background-position: 200% center; }
+  }
+
+  /* ─── ANIMATIONS ─── */
+  .fade-up { opacity: 0; transform: translateY(40px); transition: opacity 0.8s var(--smooth), transform 0.8s var(--smooth); }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+  .delay-1 { transition-delay: 0.1s; }
+  .delay-2 { transition-delay: 0.2s; }
+  .delay-3 { transition-delay: 0.3s; }
+
+  /* ─── HERO ─── */
+  #hero { padding: 160px 0 100px; position: relative; z-index: 1; }
+  .hero-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+  .hero-tag {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 13px; font-weight: 500; letter-spacing: 0.08em;
+    color: var(--green); background: rgba(0,230,160,0.08);
+    border: 1px solid rgba(0,230,160,0.2); border-radius: 100px;
+    padding: 7px 16px; margin-bottom: 24px;
+  }
+  .hero-tag svg { width: 14px; height: 14px; fill: var(--green); }
+  .hero-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(42px, 6vw, 76px);
+    font-weight: 800; line-height: 1.05; margin-bottom: 24px;
+    letter-spacing: -0.03em;
+  }
+  .hero-sub { font-size: 18px; color: var(--text); opacity: 0.8; line-height: 1.65; max-width: 480px; margin-bottom: 40px; }
+  .hero-cta { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .btn-hero {
+    font-size: 15px; font-weight: 700; color: #000;
+    background: linear-gradient(135deg, var(--green), var(--teal));
+    border: none; cursor: pointer; padding: 16px 36px;
+    border-radius: 12px; transition: all 0.4s var(--smooth);
+    font-family: 'DM Sans', sans-serif;
+    box-shadow: 0 0 30px rgba(0,230,160,0.35);
+    display: flex; align-items: center; gap: 10px;
+    position: relative; overflow: hidden;
+    animation: pulseGlow 3s ease-in-out infinite;
+  }
+  @keyframes pulseGlow {
+    0%,100% { box-shadow: 0 0 30px rgba(0,230,160,0.35); }
+    50%      { box-shadow: 0 0 50px rgba(0,230,160,0.6), 0 0 80px rgba(0,230,160,0.2); }
+  }
+  .btn-hero:hover { transform: scale(1.04) translateY(-3px); }
+  .btn-hero svg { transition: transform 0.4s var(--smooth); }
+  .btn-hero:hover svg { transform: translateX(6px); }
+
+  /* ─── CHAT MOCKUP (GEMINI STYLE) ─── */
+  .hero-visual { position: relative; width: 100%; max-width: 500px; margin: 0 auto; }
+  .chat-glow-ring {
+    position: absolute; inset: -30px;
+    border-radius: 32px;
+    background: conic-gradient(from 0deg, var(--green), var(--teal), transparent, transparent, var(--green));
+    animation: spinGlow 8s linear infinite;
+    opacity: 0.3;
+    filter: blur(10px);
+  }
+  @keyframes spinGlow { to { transform: rotate(360deg); } }
+  
+  .chat-card {
+    position: relative; 
+    background: rgba(10,12,20,0.7);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    border: 1px solid rgba(0,230,160,0.3); 
+    border-radius: 24px;
+    padding: 24px; overflow: hidden;
+    box-shadow: var(--card-shadow), inset 0 0 20px rgba(255,255,255,0.02);
+    animation: floatCard 6s ease-in-out infinite;
+    width: 100%;
+  }
+  @keyframes floatCard {
+    0%,100% { transform: translateY(0); }
+    50%      { transform: translateY(-15px); }
+  }
+
+  .chat-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+  .chat-header-left { display: flex; align-items: center; gap: 12px; }
+  .chat-avatar {
+    width: 36px; height: 36px; border-radius: 10px;
+    background: linear-gradient(135deg, var(--green), var(--teal));
+    display: flex; align-items: center; justify-content: center; color: #000;
+    box-shadow: 0 0 20px rgba(0,230,160,0.5);
+  }
+  .chat-name { font-size: 16px; font-weight: 600; }
+  .chat-status { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--green); margin-top: 2px;}
+  .chat-status::before { content:''; width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:blink 1.5s ease-in-out infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+  
+  .chat-tools { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+  .tool-pill {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 12px; font-weight: 500; color: var(--muted);
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 100px; padding: 6px 14px; cursor: pointer;
+    transition: all 0.3s var(--smooth);
+  }
+  .tool-pill.active, .tool-pill:hover {
+    color: var(--green); border-color: rgba(0,230,160,0.5);
+    background: rgba(0,230,160,0.1); box-shadow: 0 0 15px rgba(0,230,160,0.2);
+    transform: translateY(-2px);
+  }
+  .tool-pill .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; transition: transform 0.3s var(--smooth); }
+  .tool-pill:hover .dot { transform: scale(1.3); }
+
+  /* -- Updated Gemini Style Messages -- */
+  .chat-messages { 
+    margin-bottom: 20px; display: flex; flex-direction: column; gap: 24px; /* Increased gap for cleanliness */
+    max-height: 280px; overflow-y: auto; padding-right: 8px; 
+    scroll-behavior: smooth;
+  }
+  .chat-messages::-webkit-scrollbar { width: 6px; }
+  .chat-messages::-webkit-scrollbar-track { background: transparent; }
+  .chat-messages::-webkit-scrollbar-thumb { background: rgba(0,230,160,0.2); border-radius: 10px; }
+  
+  .msg { 
+    display: flex; gap: 16px; align-items: flex-start; width: 100%;
+    transform-origin: bottom left; 
+  }
+  /* Staggered message entry */
+  .msg.visible { animation: messagePop 0.5s var(--smooth) forwards; }
+  @keyframes messagePop {
+    0% { opacity: 0; transform: translateY(10px) scale(0.95); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  /* User Message specific layout (Gemini style) */
+  .msg.user-msg { 
+    flex-direction: row-reverse; /* Align to right */
+    transform-origin: bottom right;
+  }
+
+  .msg-bubble {
+    font-size: 15px; line-height: 1.6;
+    max-width: 85%;
+  }
+  
+  /* AI has NO background bubble, reads like a document */
+  .msg-bubble.ai { 
+    background: transparent; 
+    border: none; 
+    color: var(--text); 
+    padding: 0; /* Remove padding to align with icon */
+    box-shadow: none;
+  }
+
+  /* User has a clean, subtle rounded bubble */
+  .msg-bubble.user { 
+    background: rgba(255,255,255,0.08); 
+    border: 1px solid rgba(255,255,255,0.05); 
+    color: var(--text); 
+    border-radius: 24px; 
+    padding: 12px 20px; 
+  }
+
+  .msg-icon { 
+    width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0; 
+    display: flex; align-items: center; justify-content: center; 
+    font-size: 16px; margin-top: 0px;
+  }
+  /* AI Icon is a clean sparkling star, no background */
+  .msg-icon.ai-icon { 
+    background: transparent; 
+    color: var(--green); 
+  }
+  /* Hide the user icon for a cleaner look */
+  .msg-icon.user-icon { display: none; } 
+  
+  /* Modern Pill Input Box */
+  .chat-input-row {
+    display: flex; align-items: center; gap: 12px;
+    background: rgba(20, 22, 30, 0.8); 
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 40px; /* Fully rounded pill */
+    padding: 6px 6px 6px 20px; /* Extra left padding, tight right padding for button */
+    transition: all 0.4s var(--smooth);
+    margin-top: 10px;
+  }
+  .chat-input-row:focus-within { 
+    border-color: rgba(0,230,160,0.5); 
+    box-shadow: 0 0 0 3px rgba(0,230,160,0.15); 
+    background: rgba(255,255,255,0.05);
+  }
+  .chat-input-row input {
+    flex: 1; background: none; border: none; outline: none;
+    font-size: 15px; color: var(--text); font-family: 'DM Sans', sans-serif;
+  }
+  .chat-input-row input::placeholder { color: var(--muted); }
+  
+  .send-btn {
+    width: 40px; height: 40px; border-radius: 50%; /* Perfect circle */
+    background: linear-gradient(135deg, var(--green), var(--teal));
+    border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: all 0.3s var(--smooth); flex-shrink: 0;
+  }
+  .send-btn:hover { transform: scale(1.1); box-shadow: 0 0 20px rgba(0,230,160,0.5); }
+  
+  /* Bouncing Typing Dots */
+  .typing-dots { display: flex; gap: 5px; padding-top: 8px; align-items: center;}
+  .typing-dots span {
+    width: 6px; height: 6px; background-color: var(--green); border-radius: 50%;
+    animation: typingBounce 1.4s infinite ease-in-out both;
+  }
+  .typing-dots span:nth-child(1) { animation-delay: -0.32s; }
+  .typing-dots span:nth-child(2) { animation-delay: -0.16s; }
+  @keyframes typingBounce {
+    0%, 80%, 100% { transform: scale(0); opacity: 0.3;}
+    40% { transform: scale(1); opacity: 1; box-shadow: 0 0 8px var(--green);}
+  }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 1024px) {
+    .hero-inner { grid-template-columns: 1fr; gap: 80px; }
+    .hero-left { text-align: center; display: flex; flex-direction: column; align-items: center;}
+    .hero-sub { margin: 0 auto 40px;}
+    .hero-cta { justify-content: center; flex-direction: column; gap: 24px;}
+  }
+  
+  @media (max-width: 600px) {
+    .hero-title { font-size: clamp(36px, 10vw, 42px); }
+    .hero-visual { padding: 0 10px; }
+    .chat-card { padding: 20px 16px; border-radius: 20px;}
+  }
+
+  /* ─── SCROLL PROGRESS ─── */
+  .scroll-progress {
+    position: fixed; top: 0; left: 0; height: 3px; z-index: 200;
+    background: linear-gradient(90deg, var(--green), var(--teal));
+    transition: width 0.1s linear; width: 0%;
+    box-shadow: 0 0 10px rgba(0,230,160,0.5);
+  }
+</style>
+</head>
+<body>
+
+<!-- Hidden SVG definitions for Gradients -->
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <linearGradient id="ai-sparkle-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00e6a0" />
+      <stop offset="100%" stop-color="#00c8d4" />
+    </linearGradient>
+  </defs>
+</svg>
+
+<div class="scroll-progress" id="scrollProgress"></div>
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+<div class="blob blob-3"></div>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="container">
+    <div class="hero-inner">
+      <div class="hero-left fade-up">
+        <div class="hero-tag">
+          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          Built by AI innovators
+        </div>
+        <h1 class="hero-title">
+          Limitless AI.<br>
+          <span class="gradient-text shine-effect">Now Live.</span>
+        </h1>
+        <p class="hero-sub">One subscription. Infinite possibilities. Access GPT-4o, Claude 3.5, Gemini 1.5, and Llama instantly from a single, premium workspace.</p>
+        <div class="hero-cta">
+          <button class="btn-hero">
+            Get Started Now
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+      </div>
+      
+      <div class="hero-visual fade-up delay-2">
+        <div class="chat-glow-ring"></div>
+        <div class="chat-card">
+          <div class="chat-header">
+            <div class="chat-header-left">
+              <div class="chat-avatar">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="0.5" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+              </div>
+              <div>
+                <div class="chat-name">ExploreAI</div>
+                <div class="chat-status">Online & Ready</div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="chat-tools">
+            <div class="tool-pill active"><span class="dot"></span>AI Assistant</div>
+          </div>
+          
+          <div class="chat-messages" id="hero-chat-messages">
+            <!-- User Message (Gemini Style) -->
+            <div class="msg user-msg visible">
+              <div class="msg-bubble user">Write the best way to brew coffee at home</div>
+            </div>
+            
+            <!-- AI Message (Gemini Style) -->
+            <div class="msg visible">
+              <div class="msg-icon ai-icon">
+                <svg viewBox="0 0 24 24" width="26" height="26" fill="url(#ai-sparkle-grad)">
+                  <path d="M12 0C12 6.627 17.373 12 24 12C17.373 12 12 17.373 12 24C12 17.373 6.627 12 0 12C6.627 12 12 6.627 12 0Z"/>
+                </svg>
+              </div>
+              <div class="msg-bubble ai">For the perfect home brew, use a pour-over with freshly ground beans (medium-coarse). Heat water to 93°C and pour slowly in circular motions. The result? Café-quality coffee every morning ☕</div>
+            </div>
+          </div>
+          
+          <div class="chat-input-row">
+            <input type="text" id="hero-chat-input" placeholder="Ask ExploreAI anything..." autocomplete="off"/>
+            <button class="send-btn" id="hero-send-btn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Intersection observer for animations
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.15, rootMargin: "0px 0px -50px 0px" });
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+  // --- CHAT BOX FUNCTIONALITY ---
+  const chatInput = document.getElementById('hero-chat-input');
+  const sendBtn = document.getElementById('hero-send-btn');
+  const chatMessages = document.getElementById('hero-chat-messages');
+
+  // Premium typing effect variables
+  const phrases = [
+    'Write the best way to brew coffee at home...',
+    'Generate a landing page for my startup...',
+    'Explain quantum computing simply...',
+    'Debug this Python function for me...',
+  ];
+  let pi = 0, ci = 0, typing = true;
+  let typingInterval;
+
+  // Start placeholder typing effect
+  function startTypingEffect() {
+    typingInterval = setInterval(() => {
+      if (!chatInput) return;
+      const phrase = phrases[pi];
+      if (typing) {
+        chatInput.placeholder = phrase.slice(0, ci++);
+        if (ci > phrase.length) { typing = false; setTimeout(() => {}, 1500); ci = phrase.length; }
+      } else {
+        chatInput.placeholder = phrase.slice(0, ci--);
+        if (ci < 0) { typing = true; pi = (pi + 1) % phrases.length; ci = 0; }
+      }
+    }, 60);
+  }
+
+  startTypingEffect();
+
+  // Add new message to the UI with Gemini-style formatting
+  function addMessage(text, sender) {
+    const msgDiv = document.createElement('div');
+    
+    // Assign specific class based on sender to trigger CSS flex-direction reversing
+    msgDiv.className = sender === 'user' ? 'msg user-msg' : 'msg';
+    
+    if (sender === 'user') {
+      msgDiv.innerHTML = `
+        <div class="msg-bubble user">${text}</div>
+      `;
+    } else {
+      msgDiv.innerHTML = `
+        <div class="msg-icon ai-icon">
+          <svg viewBox="0 0 24 24" width="26" height="26" fill="url(#ai-sparkle-grad)">
+            <path d="M12 0C12 6.627 17.373 12 24 12C17.373 12 12 17.373 12 24C12 17.373 6.627 12 0 12C6.627 12 12 6.627 12 0Z"/>
+          </svg>
+        </div>
+        <div class="msg-bubble ai">${text}</div>
+      `;
+    }
+    
+    chatMessages.appendChild(msgDiv);
+    
+    // Trigger CSS animation by adding 'visible' class after tiny delay
+    setTimeout(() => msgDiv.classList.add('visible'), 10);
+    
+    // Smooth scroll to bottom
+    chatMessages.scrollTo({
+      top: chatMessages.scrollHeight,
+      behavior: 'smooth'
+    });
+  }
+
+  // Handle the sending of a message via REAL API CALL
+  async function handleSendMessage() {
+    const text = chatInput.value.trim();
+    if (!text) return;
+
+    // Stop placeholder typing effect permanently on interaction
+    clearInterval(typingInterval);
+    chatInput.placeholder = "Message ExploreAI...";
+
+    // 1. Add User Message
+    addMessage(text, 'user');
+    chatInput.value = '';
+
+    // 2. Add Premium "Bouncing Dots" Thinking indicator
+    const typingId = 'typing-' + Date.now();
+    const typingDiv = document.createElement('div');
+    typingDiv.className = 'msg';
+    typingDiv.id = typingId;
+    typingDiv.innerHTML = `
+      <div class="msg-icon ai-icon">
+        <svg viewBox="0 0 24 24" width="26" height="26" fill="url(#ai-sparkle-grad)">
+          <path d="M12 0C12 6.627 17.373 12 24 12C17.373 12 12 17.373 12 24C12 17.373 6.627 12 0 12C6.627 12 12 6.627 12 0Z"/>
+        </svg>
+      </div>
+      <div class="msg-bubble ai typing-dots">
+        <span></span><span></span><span></span>
+      </div>
+    `;
+    chatMessages.appendChild(typingDiv);
+    setTimeout(() => typingDiv.classList.add('visible'), 10);
+    chatMessages.scrollTo({ top: chatMessages.scrollHeight, behavior: 'smooth' });
+
+    // 3. Send request to your local Python Backend
+    try {
+        const response = await fetch('http://127.0.0.1:8000/api/chat', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ message: text }) // Send text to Python
+        });
+
+        const data = await response.json(); // Wait for Python to reply
+
+        // Remove the bouncing dots indicator gracefully
+        const indicator = document.getElementById(typingId);
+        indicator.style.opacity = '0';
+        setTimeout(() => {
+            indicator.remove();
+            // 4. Add the real AI Response to UI
+            addMessage(data.reply, 'ai');
+        }, 300); // Wait for fade out
+        
+    } catch (error) {
+        console.error("Error connecting to backend:", error);
+        
+        const indicator = document.getElementById(typingId);
+        if(indicator) indicator.remove();
+        
+        addMessage("Error: Could not connect to the backend server!!", 'ai');
+    }
+  }
+
+  // Event Listeners for Chat
+  sendBtn.addEventListener('click', handleSendMessage);
+  
+  chatInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+      handleSendMessage();
+    }
+  });
+
+  // Clear typing interval on focus
+  chatInput.addEventListener('focus', () => {
+    clearInterval(typingInterval);
+    chatInput.placeholder = "Message ExploreAI...";
+  });
+</script>
+</body>
+</html>
