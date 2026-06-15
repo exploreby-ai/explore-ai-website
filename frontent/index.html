@@ -525,7 +525,9 @@
 
     // 3. Send request to your local Python Backend
     try {
-        const response = await fetch('http://127.0.0.1:8000/api/chat', {
+        // 🚨 IMPORTANT: REPLACE 'YOUR_RENDER_BACKEND_URL' WITH YOUR ACTUAL LIVE RENDER BACKEND LINK
+        // IT SHOULD LOOK SOMETHING LIKE: 'https://explore-backend-xxxx.onrender.com/api/chat'
+        const response = await fetch('https://explore-backend-59x2.onrender.com/api/chat', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
