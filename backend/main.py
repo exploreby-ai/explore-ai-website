@@ -8,7 +8,7 @@ current_time = datetime.datetime.now().strftime("%B %d, %Y")
 # Send this to the AI: 
 # "System: The current date is {current_time}. User asks: What is the date?"
 # 1. Configure the AI API (Replace with your actual API key)
-genai.configure(api_key="API KEY")
+genai.configure(api_key="AQ.Ab8RN6IcWylWbWJGJRmGCRdeR-_sqNCRHNF37LKYIKpNiEZYug")
 model = genai.GenerativeModel(model_name="gemini-2.5-flash")
 
 # 2. Initialize the FastAPI app
